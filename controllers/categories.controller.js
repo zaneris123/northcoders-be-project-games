@@ -5,4 +5,5 @@ exports.getAllCategories = (req, res, next) => {
         .then((categoryData) =>{
             res.status(200).send(categoryData)
         })
+        .catch(err => next(err))
 }

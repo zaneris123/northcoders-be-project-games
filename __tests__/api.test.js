@@ -3,9 +3,9 @@ const seed = require("../db/seeds/seed.js")
 const data = require("../db/data/test-data")
 const app = require("../app.js")
 
-const connection = require("../db/connection.js")
+const db = require("../db/connection.js")
 
-afterAll(() => connection.end())
+afterAll(() => db.end())
 
 beforeEach(() => seed(data))
 
@@ -15,13 +15,18 @@ describe("GET, Categories",()=>{
             .get("/api/categories")
             .expect(200)
             .then(({body}) => {
-                expect(body).toHaveLength(data.categoryData.length)
-                body.forEach(categoryEntry => {
+                expect(body.categories).toHaveLength(data.categoryData.length)
+                body.categories.forEach(categoryEntry => {
                     expect(categoryEntry).toMatchObject({
                         slug: expect.any(String),
                         description: expect.any(String)
                     })
                 })
             })
+    })
+    test("404: invalid url page not found",()=>{
+        return request(app)
+            .get("/api/category")
+            .expect(404)
     })
 })
