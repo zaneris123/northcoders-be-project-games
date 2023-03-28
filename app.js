@@ -1,10 +1,13 @@
 const express = require("express")
 const {getAllCategories} = require("./controllers/categories.controller.js")
+const {getReviews} = require("./controllers/reviews.controller.js")
 const {errorHandler} = require("./controllers/error.controller.js")
 
-const app = express();
+
+const app = express()
 
 app.get("/api/categories", getAllCategories)
+app.get("/api/reviews/:id", getReviews)
 
 app.all('*', (req, res) =>{
     res.status(404).send({msg: "page not found"})
