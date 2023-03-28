@@ -67,7 +67,7 @@ describe("GET, Reviews by ID",()=>{
     })
 })
 
-describe.only("GET, Reviews",()=>{
+describe("GET, Reviews",()=>{
     test("200: recieved list of reviews in array", () =>{
         return request(app)
             .get("/api/reviews")
