@@ -53,9 +53,9 @@ describe("GET, reviews by ID",()=>{
     test("400: Invalid review ID",()=>{
         return request(app)
             .get("/api/reviews/300")
-            .expect(400)
+            .expect(404)
             .then(({body})=>{
-                expect(body).toEqual({msg:"Invalid review ID"})
+                expect(body).toEqual({msg:"Review ID not found"})
             })
     })
     test("400: Invalid review ID",()=>{
