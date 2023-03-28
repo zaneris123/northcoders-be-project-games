@@ -12,8 +12,8 @@ exports.getReviews = (req, res, next) => {
 }
 exports.getAllReviews = (req, res, next) => {
     fetchAllReviews()
-        .then((allReviewData)=>{
-            res.status(200).send({reviews: allReviewData})
+        .then((reviewData)=>{
+            res.status(200).send({reviews: reviewData})
         })
         .catch((err)=>{
             next(err)

@@ -76,16 +76,31 @@ describe("GET, Reviews",()=>{
                 expect(body.reviews).toHaveLength(data.reviewData.length)
                 body.reviews.forEach(reviewEntry =>{
                     expect(reviewEntry).toMatchObject({
-                        review_id: expect.any(Number),
-                        title: expect.any(String),
-                        review_body: expect.any(String),
-                        designer: expect.any(String),
-                        review_img_url: expect.any(String),
-                        votes: expect.any(Number),
-                        category: expect.any(String),
                         owner: expect.any(String),
-                        created_at: expect.any(String)
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        designer: expect.any(String),
+                        comment_count: expect.any(Number)
                     })
+                })
+            })
+    })
+    test("200: correct comment count",()=>{
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then(({body})=>{
+                const reviewid1 = body.reviews.filter(review => review.review_id===1)[0]
+                const reviewid2 = body.reviews.filter(review => review.review_id===2)[0]
+                expect(reviewid1).toMatchObject({
+                    comment_count: 0
+                })
+                expect(reviewid2).toMatchObject({
+                    comment_count: 3
                 })
             })
     })

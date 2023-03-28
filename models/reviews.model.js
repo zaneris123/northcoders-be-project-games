@@ -9,6 +9,6 @@ exports.fetchReview = (reviewId) => {
             })
 }
 exports.fetchAllReviews = () => {
-    return db.query(`SELECT * FROM reviews ORDER BY created_at DESC;`)
+    return db.query(`SELECT CAST(COUNT(b.review_id) AS INTEGER) AS comment_count, a.* FROM reviews a FULL OUTER JOIN comments b ON b.review_id = a.review_id GROUP BY a.review_id ORDER BY a.created_at DESC;`)
         .then((data)=> data.rows)
 }
