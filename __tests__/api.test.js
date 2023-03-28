@@ -37,7 +37,7 @@ describe("GET, reviews by ID",()=>{
             .get("/api/reviews/3")
             .expect(200)
             .then(({body})=>{
-                expect(body).toMatchObject({
+                expect(body.review).toMatchObject({
                     review_id: 3,
                     title: expect.any(String),
                     review_body: expect.any(String),
@@ -63,7 +63,7 @@ describe("GET, reviews by ID",()=>{
         .get("/api/reviews/reallybadentry")
         .expect(400)
         .then(({body})=>{
-            expect(body).toEqual({msg:"Invalid review ID"})
+            expect(body).toEqual({msg:"Invalid entry"})
         })
     })
 })

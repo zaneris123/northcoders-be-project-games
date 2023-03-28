@@ -4,9 +4,7 @@ const {getReviews} = require("./controllers/reviews.controller.js")
 const {errorHandler} = require("./controllers/error.controller.js")
 
 
-const app = express();
-
-app.use(express.json())
+const app = express()
 
 app.get("/api/categories", getAllCategories)
 app.get("/api/reviews/:id", getReviews)
