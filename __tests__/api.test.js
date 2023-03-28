@@ -2,7 +2,6 @@ const request = require("supertest")
 const seed = require("../db/seeds/seed.js")
 const data = require("../db/data/test-data")
 const app = require("../app.js")
-
 const db = require("../db/connection.js")
 
 afterAll(() => db.end())
@@ -31,7 +30,7 @@ describe("GET, Categories",()=>{
     })
 })
 
-describe("GET, reviews by ID",()=>{
+describe("GET, Reviews by ID",()=>{
     test("200: recieved specified review by ID",()=>{
         return request(app)
             .get("/api/reviews/3")
@@ -68,3 +67,42 @@ describe("GET, reviews by ID",()=>{
     })
 })
 
+describe.only("GET, Reviews",()=>{
+    test("200: recieved list of reviews in array", () =>{
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then(({body})=>{
+                expect(body.reviews).toHaveLength(data.reviewData.length)
+                body.reviews.forEach(reviewEntry =>{
+                    expect(reviewEntry).toMatchObject({
+                        review_id: expect.any(Number),
+                        title: expect.any(String),
+                        review_body: expect.any(String),
+                        designer: expect.any(String),
+                        review_img_url: expect.any(String),
+                        votes: expect.any(Number),
+                        category: expect.any(String),
+                        owner: expect.any(String),
+                        created_at: expect.any(String)
+                    })
+                })
+            })
+    })
+    test("200: recieved list is sorted by date (Descending)",()=>{
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then(({body})=>{;
+                expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+            })
+    })
+    test("404: Incorrect url, not found",()=>{
+        request(app)
+        .get("/api/review")
+        .expect(404)
+        .then(({body})=>{
+            expect(body.msg).toBe("page not found")
+        })
+    })
+})

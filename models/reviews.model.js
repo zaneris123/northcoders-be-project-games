@@ -8,3 +8,7 @@ exports.fetchReview = (reviewId) => {
                 else return data.rows[0]
             })
 }
+exports.fetchAllReviews = () => {
+    return db.query(`SELECT * FROM reviews ORDER BY created_at DESC;`)
+        .then((data)=> data.rows)
+}
