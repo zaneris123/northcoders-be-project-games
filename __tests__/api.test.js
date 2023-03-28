@@ -50,7 +50,7 @@ describe("GET, reviews by ID",()=>{
                 })
             })
     })
-    test("400: Invalid review ID",()=>{
+    test("404: Error when review ID does not exist.",()=>{
         return request(app)
             .get("/api/reviews/300")
             .expect(404)
