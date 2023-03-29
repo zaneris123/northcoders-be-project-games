@@ -121,3 +121,48 @@ describe("GET, Reviews",()=>{
         })
     })
 })
+
+describe("GET, Recieved list of comments by Review ID",()=>{
+    test("200: recieved list of comments",()=>{
+        return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toHaveLength(3)
+                body.comments.forEach(commentEntry => {
+                expect(commentEntry).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    review_id: 2
+                    })
+                })
+            })
+    })
+    test("200: Recieve empty array",()=>{
+        return request(app)
+            .get("/api/reviews/1/comments")
+            .expect(200)
+            .then(({body})=>{
+                expect(body.comments).toHaveLength(0)
+            })
+    })
+    test("404: Error for when review ID does not exist",()=>{
+        return request(app)
+            .get("/api/reviews/1000/comments")
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toBe("Review ID not found")
+            })
+    })
+    test("400: Invalid review ID",()=>{
+        return request(app)
+            .get("/api/reviews/notanid/comments")
+            .expect(400)
+            .then(({body})=>{
+                expect(body).toEqual({msg:"Invalid entry"})
+            })
+    })
+})
