@@ -2,15 +2,11 @@ const {fetchCommentsByReview} = require("../models/comments.model.js")
 const {fetchReview} = require("../models/reviews.model.js")
 
 exports.getCommentsByReview = (req, res, next) => {
-    fetchReview(req.params.id)
-        .catch((err)=>{
-            next(err)
-        })
-    fetchCommentsByReview(req.params.id)
-        .then((commentsData)=>{
-            res.status(200).send({comments: commentsData})
-        })
-        .catch((err)=>{
-            next(err)
-        })
+    Promise.all([fetchReview(req.params.id),fetchCommentsByReview(req.params.id)])
+    .then((Data)=>{
+        res.status(200).send({comments: Data[1]})
+    })
+    .catch((err)=>{
+        next(err)
+    })
 }

@@ -141,7 +141,15 @@ describe("GET, Recieved list of comments by Review ID",()=>{
                 })
             })
     })
-    test("200: Recieve empty array",()=>{
+    test("200: list of comments are in reverse chronological order",()=>{
+        return request(app)
+            .get("/api/reviews/2/comments")
+            .expect(({body})=>{
+                console.log(body)
+                expect(body.comments).toBeSortedBy("created_at", {descending: true})
+            })
+    })
+    test("200: Recieve empty array for review with no comments",()=>{
         return request(app)
             .get("/api/reviews/1/comments")
             .expect(200)
