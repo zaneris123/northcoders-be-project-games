@@ -145,7 +145,6 @@ describe("GET, Recieved list of comments by Review ID",()=>{
         return request(app)
             .get("/api/reviews/2/comments")
             .expect(({body})=>{
-                console.log(body)
                 expect(body.comments).toBeSortedBy("created_at", {descending: true})
             })
     })
