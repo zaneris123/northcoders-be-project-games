@@ -173,3 +173,65 @@ describe("GET, Recieved list of comments by Review ID",()=>{
             })
     })
 })
+
+describe("POST: user can post comments to reviews",()=>{
+    test("201: comment is posted",()=>{
+        const testComment = {
+            "username":"mallionaire",
+            "body":"What a great and indepth review of something I have nothing to say about as I have no context of what I am actually commenting on yes."
+        }
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send(testComment)
+            .expect(201)
+            .then(({body})=>{
+                expect(body.comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: testComment.username,
+                        body: testComment.body,
+                        review_id: 1
+                })
+            })
+    })
+    test("400: invalid post structure",()=>{
+        const badTestComment = {
+            "username":"mallionaire",
+            "notABody":"What a great and indepth review of something I have nothing to say about as I have no context of what I am actually commenting on yes."
+        }
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send(badTestComment)
+            .expect(400)
+            .then(({body})=>{
+                expect(body).toEqual({msg: "Invalid post"})
+            })
+    })
+    test("400: invalid user name",()=>{
+        const badTestComment = {
+            "username":"notauser",
+            "body":"my post that i really wanna post"
+        }
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send(badTestComment)
+            .expect(400)
+            .then(({body})=>{
+                expect(body).toEqual({msg: "Invalid username"})
+            })
+    })
+    test("404: review id not found",()=>{
+        const testComment = {
+            "username":"mallionaire",
+            "body":"What a great and indepth review of something I have nothing to say about as I have no context of what I am actually commenting on yes."
+        }
+        return request(app)
+            .post("/api/reviews/12131/comments")
+            .send(testComment)
+            .expect(404)
+            .then(({body})=>{
+                expect(body).toEqual({msg: "Review ID not found"})
+            })
+    })
+})

@@ -7,3 +7,15 @@ exports.fetchCommentsByReview = (reviewId) => {
                 return data.rows
             })
 }
+
+exports.insertCommentById = (bodyObj, reviewId) => {
+
+    const inputArray = [bodyObj.username,bodyObj.body, reviewId]
+    return db.query(`INSERT INTO comments
+                    (author, body, review_id) 
+                    VALUES ($1, $2, $3)
+                    RETURNING *;`, inputArray)
+            .then((data)=>{
+                    return data.rows[0]
+            })
+}
