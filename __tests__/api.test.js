@@ -348,3 +348,19 @@ describe("PATCH: updated reviews votes count",()=>{
         })
     })
 })
+
+describe("DELETE: removes comment by id",()=>{
+    test("204: removes comment",()=>{
+        return request(app)
+        .delete("/api/comments/3")
+        .expect(204)
+    })
+    test("400: Invalid comment entry",()=>{
+        return request(app)
+        .delete("/api/comments/dskad")
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "Invalid entry"})
+        })
+    })
+})
