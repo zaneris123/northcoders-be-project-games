@@ -12,3 +12,10 @@ exports.fetchAllReviews = () => {
     return db.query(`SELECT CAST(COUNT(b.review_id) AS INTEGER) AS comment_count, a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer FROM reviews a FULL OUTER JOIN comments b ON b.review_id = a.review_id GROUP BY a.review_id ORDER BY a.created_at DESC;`)
         .then((data)=> data.rows)
 }
+
+exports.updateReviews = (bodyObj, reviewId) => {
+    if(!bodyObj.inc_votes)return Promise.reject({msg:"Invalid patch",status:400})
+    const inputArray = [bodyObj.inc_votes, reviewId]
+    return db.query(`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`, inputArray)
+        .then((data)=> data.rows[0])
+}

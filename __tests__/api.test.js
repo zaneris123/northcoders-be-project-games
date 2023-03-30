@@ -269,3 +269,82 @@ describe("POST: user can post comments to reviews",()=>{
         })
     })
 })
+
+describe("PATCH: updated reviews votes count",()=>{
+    test("200: updates review count, and returns review",()=>{
+        const newVote = 3;
+        return request(app)
+        .patch("/api/reviews/3")
+        .send({ inc_votes: newVote })
+        .expect(200)
+        .then(({body})=>{
+            expect(body.review).toMatchObject({
+                review_id: 3,
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: 8,
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String)
+            })
+        })
+    })
+    test("200: updates review count, and returns review(negative)",()=>{
+        const newVote = -3;
+        return request(app)
+        .patch("/api/reviews/3")
+        .send({ inc_votes: newVote })
+        .expect(200)
+        .then(({body})=>{
+            expect(body.review).toMatchObject({
+                review_id: 3,
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: 2,
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String)
+            })
+        })
+    })
+    test("400: invalid patch request",()=>{
+        return request(app)
+        .patch("/api/reviews/3")
+        .send({ notavote: 3 })
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg:"Invalid patch"})
+        })
+    })
+    test("404: review id not found",()=>{
+        return request(app)
+        .patch("/api/reviews/9999")
+        .send({ inc_votes: 3})
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg:"Review ID not found"})
+        })
+    })
+    test("400: Invalid ID input",()=>{
+        return request(app)
+        .patch("/api/reviews/badid")
+        .send({inc_votes: 3})
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "Invalid entry"})
+        })
+    })
+    test("400: Invalid entry in votes",()=>{
+        return request(app)
+        .patch("/api/reviews/3")
+        .send({inc_votes: "notanum"})
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "Invalid entry"})
+        })
+    })
+})

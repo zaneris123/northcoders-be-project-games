@@ -1,4 +1,4 @@
-const {fetchReview, fetchAllReviews} = require("../models/reviews.model.js")
+const {fetchReview, fetchAllReviews, updateReviews} = require("../models/reviews.model.js")
 
 
 exports.getReviews = (req, res, next) => {
@@ -14,6 +14,15 @@ exports.getAllReviews = (req, res, next) => {
     fetchAllReviews()
         .then((reviewData)=>{
             res.status(200).send({reviews: reviewData})
+        })
+        .catch((err)=>{
+            next(err)
+        })
+}
+exports.patchReviews = (req, res, next) => {
+    Promise.all([fetchReview(req.params.id),updateReviews(req.body,req.params.id)])
+        .then((Data)=>{
+            res.status(200).send({review: Data[1]})
         })
         .catch((err)=>{
             next(err)
