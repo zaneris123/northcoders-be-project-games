@@ -372,3 +372,29 @@ describe("DELETE: removes comment by id",()=>{
         })
     })
 })
+
+describe("GET list of users",()=>{
+    test("200: recieve list of users",()=>{
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.users).toHaveLength(data.userData.length)
+            body.users.forEach((user)=>{
+                expect(user).toMatchObject({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+            })
+        })
+    })
+    test("404: invalid url",()=>{
+        return request(app)
+        .get("/api/usrs")
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "page not found"})
+        })
+    })
+})
