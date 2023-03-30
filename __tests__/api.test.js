@@ -355,6 +355,14 @@ describe("DELETE: removes comment by id",()=>{
         .delete("/api/comments/3")
         .expect(204)
     })
+    test("404: Invalid comment Id",()=>{
+        return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "Invalid comment ID"})
+        })
+    })
     test("400: Invalid comment entry",()=>{
         return request(app)
         .delete("/api/comments/dskad")

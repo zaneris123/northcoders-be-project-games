@@ -23,7 +23,7 @@ exports.postComments = (req, res, next) => {
 
 exports.deleteComments = (req, res, next) => {
     removeComments(req.params.id)
-    .then(()=>{
+    .then((Data)=>{
         res.status(204).send("")
     })
     .catch((err)=>{

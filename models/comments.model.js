@@ -21,6 +21,8 @@ exports.insertCommentById = (bodyObj, reviewId) => {
 }
 
 exports.removeComments = (commentId) => {
-    return db.query(`DELETE FROM comments WHERE comment_id = $1;`,[commentId])
-        .then(()=>{return})
+    return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`,[commentId])
+        .then((data)=>{
+            if(data.rows.length === 0) return Promise.reject({msg: "Invalid comment ID", status: 404})
+        })
 }
