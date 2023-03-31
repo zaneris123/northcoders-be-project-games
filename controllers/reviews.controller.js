@@ -11,7 +11,7 @@ exports.getReviews = (req, res, next) => {
         })
 }
 exports.getAllReviews = (req, res, next) => {
-    fetchAllReviews()
+    fetchAllReviews(req.query)
         .then((reviewData)=>{
             res.status(200).send({reviews: reviewData})
         })

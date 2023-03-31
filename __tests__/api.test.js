@@ -398,3 +398,95 @@ describe("GET list of users",()=>{
         })
     })
 })
+
+describe("GET reviews query testing",()=>{
+    test("200: recieve list of reviews filtered by category (category = social deduction)",()=>{
+        const filteredLength = data.reviewData.filter(review => review.category === "social deduction").length
+        return request(app)
+        .get("/api/reviews?category=social_deduction")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toHaveLength(filteredLength)
+            body.reviews.forEach((review)=>{
+                expect(review).toMatchObject({
+                    owner: expect.any(String),
+                    title: expect.any(String),
+                    review_id: expect.any(Number),
+                    category: "social deduction",
+                    review_img_url: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    designer: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+            })
+        })
+    })
+
+    test("200: defaults to create at order DESC",()=>{
+        return request(app)
+        .get("/api/reviews?category=social_deduction")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+        })
+    })
+
+    test("200: recieve empty array when filter unknown category",()=>{
+        return request(app)
+        .get("/api/reviews?category=notacategory")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toHaveLength(0)
+        })
+    })
+
+    test("200: recieve array ordered by specified order (default desc)",()=>{
+        return request(app)
+        .get("/api/reviews?order_by=votes")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("votes", {descending: true})
+        })
+    })
+
+    test("200: defaults to created at order when invalid order by",()=>{
+        return request(app)
+        .get("/api/reviews?order_by=notaorder")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+        })
+    })
+
+    test("200: recieve array that ordereded by ASC when specified",()=>{
+        return request(app)
+        .get("/api/reviews?order=ASC")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("created_at", {descending: false})
+        })
+    })
+
+    test("200: ignores and defaults order",()=>{
+        return request(app)
+        .get("/api/reviews?order=notaordering")
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+        })
+    })
+
+    test("CC-C-Combo query. filters and sorts by ascending",()=>{
+        return request(app)
+        .get("/api/reviews?category=social_deduction&&order_by=votes&&order=ASC")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.reviews).toBeSortedBy("votes", {descending: false})
+            body.reviews.forEach((review)=>{
+                expect(review).toMatchObject({
+                    category: "social deduction"
+                })
+            })
+        })
+    })
+})
