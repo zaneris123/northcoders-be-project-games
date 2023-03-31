@@ -432,12 +432,21 @@ describe("GET reviews query testing",()=>{
         })
     })
 
-    test("200: recieve empty array when filter unknown category",()=>{
+    test("200: recieve empty array for known category that dont have reviews",()=>{
         return request(app)
-        .get("/api/reviews?category=notacategory")
+        .get("/api/reviews?category=childrens_games")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toHaveLength(0)
+        })
+    })
+
+    test("404: recieve not found for unknown category",()=>{
+        return request(app)
+        .get("/api/reviews?category=notacategory")
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: "Category not found"})
         })
     })
 
@@ -450,12 +459,12 @@ describe("GET reviews query testing",()=>{
         })
     })
 
-    test("200: defaults to created at order when invalid order by",()=>{
+    test("400: Invalid order by query",()=>{
         return request(app)
-        .get("/api/reviews?order_by=notaorder")
-        .expect(200)
+        .get("/api/reviews?order_by=banana")
+        .expect(400)
         .then(({body})=>{
-            expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+            expect(body).toEqual({msg: "Invalid order_by query"})
         })
     })
 
@@ -468,11 +477,12 @@ describe("GET reviews query testing",()=>{
         })
     })
 
-    test("200: ignores and defaults order",()=>{
+    test("400: error for wrong ordering",()=>{
         return request(app)
         .get("/api/reviews?order=notaordering")
+        .expect(400)
         .then(({body})=>{
-            expect(body.reviews).toBeSortedBy("created_at", {descending: true})
+            expect(body).toEqual({msg: "Invalid order query"})
         })
     })
 
