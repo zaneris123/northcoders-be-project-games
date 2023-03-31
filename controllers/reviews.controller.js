@@ -1,6 +1,5 @@
 const {fetchReview, fetchAllReviews, updateReviews} = require("../models/reviews.model.js")
 
-
 exports.getReviews = (req, res, next) => {
     fetchReview(req.params.id)
         .then((reviewData)=>{
@@ -11,7 +10,7 @@ exports.getReviews = (req, res, next) => {
         })
 }
 exports.getAllReviews = (req, res, next) => {
-    fetchAllReviews()
+    fetchAllReviews(req.query)
         .then((reviewData)=>{
             res.status(200).send({reviews: reviewData})
         })
