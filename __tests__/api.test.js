@@ -441,7 +441,7 @@ describe("GET reviews query testing",()=>{
         })
     })
 
-    test("404: recieve not found for unknown category",()=>{
+    test("404: recieve error for for unknown category",()=>{
         return request(app)
         .get("/api/reviews?category=notacategory")
         .expect(404)
@@ -498,5 +498,48 @@ describe("GET reviews query testing",()=>{
                 })
             })
         })
+    })
+    
+    describe("GET review by id, Comment count is included in specific reviews",()=>{
+        
+    test("200: recieve review by id, with comment count",()=>{
+        return request(app)
+        .get("/api/reviews/2")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.review).toMatchObject({
+                comment_count: 3,
+                review_id: 2,
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: expect.any(Number),
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String)
+            })
+        })
+    })
+
+    test("200: recieve review by id, with comment count even when 0 comments",()=>{
+        return request(app)
+        .get("/api/reviews/5")
+        .expect(200)
+        .then(({body})=>{
+            expect(body.review).toMatchObject({
+                comment_count: 0,
+                review_id: 5,
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: expect.any(Number),
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String)
+            })
+        })
+    })
     })
 })
