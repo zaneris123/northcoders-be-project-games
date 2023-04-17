@@ -4,9 +4,11 @@ const {getReviews, getAllReviews, patchReviews} = require("./controllers/reviews
 const {errorHandler} = require("./controllers/error.controller.js")
 const {getCommentsByReview, postComments, deleteComments} = require("./controllers/comments.controller.js")
 const {getAllUsers} = require("./controllers/users.controller.js")
+const cors = require('cors');
 
 
 const app = express()
+app.use(cors());
 app.use(express.json())
 
 app.get("/api/categories", getAllCategories)
