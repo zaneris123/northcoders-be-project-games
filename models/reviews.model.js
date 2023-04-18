@@ -10,14 +10,18 @@ exports.fetchReview = (reviewId) => {
 exports.fetchAllReviews = (query) => {
     return db.query(`SELECT slug FROM categories`)
         .then((categoryData)=>{
-            let categoryArr = categoryData.rows.map(category => category.slug.replaceAll("'",""))
+            let categoryArr = categoryData.rows.map(category => category.slug)
 
             let queryString = "SELECT CAST(COUNT(b.review_id) AS INTEGER) AS comment_count, a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer FROM reviews a FULL OUTER JOIN comments b ON b.review_id = a.review_id"
             
+            const categoryQuery = []
+
             if(query.category){
-                let categoryStr = query.category.replaceAll('_', ' ')
-                if(!categoryArr.includes(categoryStr))return Promise.reject({msg:"Category not found",status:404})
-                else queryString += ` WHERE a.category like '${categoryStr}'`
+                if(!categoryArr.includes(query.category))return Promise.reject({msg:"Category not found",status:404})
+                else {
+                    queryString += ` WHERE a.category = $1`
+                    categoryQuery.push(query.category)
+                }
             }
             queryString += " GROUP BY a.review_id"
 
@@ -32,13 +36,13 @@ exports.fetchAllReviews = (query) => {
             else queryString +=  " ORDER BY a.created_at"
 
             if(query.order){
-                if (query.order === "ASC" || query.order === "DESC") queryString += ` ${query.order}`
+                if (query.order === "asc" || query.order === "desc") queryString += ` ${query.order.toUpperCase()}`
                 else return Promise.reject({msg: "Invalid order query", status: 400})
             }
             else queryString += " DESC"
 
             queryString += `;`
-            return db.query(queryString)
+            return db.query(queryString, categoryQuery)
                 .then((data)=> data.rows)
         })
 

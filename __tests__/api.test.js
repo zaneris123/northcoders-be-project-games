@@ -403,7 +403,7 @@ describe("GET reviews query testing",()=>{
     test("200: recieve list of reviews filtered by category (category = social deduction)",()=>{
         const filteredLength = data.reviewData.filter(review => review.category === "social deduction").length
         return request(app)
-        .get("/api/reviews?category=social_deduction")
+        .get("/api/reviews?category=social+deduction")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toHaveLength(filteredLength)
@@ -425,7 +425,7 @@ describe("GET reviews query testing",()=>{
 
     test("200: defaults to create at order DESC",()=>{
         return request(app)
-        .get("/api/reviews?category=social_deduction")
+        .get("/api/reviews?category=social+deduction")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toBeSortedBy("created_at", {descending: true})
@@ -434,7 +434,7 @@ describe("GET reviews query testing",()=>{
 
     test("200: recieve empty array for known category that dont have reviews",()=>{
         return request(app)
-        .get("/api/reviews?category=childrens_games")
+        .get("/api/reviews?category=children's+games")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toHaveLength(0)
@@ -470,7 +470,7 @@ describe("GET reviews query testing",()=>{
 
     test("200: recieve array that ordereded by ASC when specified",()=>{
         return request(app)
-        .get("/api/reviews?order=ASC")
+        .get("/api/reviews?order=asc")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toBeSortedBy("created_at", {descending: false})
@@ -488,7 +488,7 @@ describe("GET reviews query testing",()=>{
 
     test("CC-C-Combo query. filters and sorts by ascending",()=>{
         return request(app)
-        .get("/api/reviews?category=social_deduction&&order_by=votes&&order=ASC")
+        .get("/api/reviews?category=social+deduction&order_by=votes&order=asc")
         .expect(200)
         .then(({body})=>{
             expect(body.reviews).toBeSortedBy("votes", {descending: false})
