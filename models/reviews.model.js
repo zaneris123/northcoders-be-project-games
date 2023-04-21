@@ -26,9 +26,11 @@ exports.fetchAllReviews = (query) => {
             queryString += " GROUP BY a.review_id"
 
             if(query.order_by){
-                let columnsArr = ["owner","title","review_id","category","review_img_url","create_at","votes","designer"]
+                let columnsArr = ["owner","title","review_id","category","review_img_url","create_at","votes","designer","comment_count"]
                 if (!columnsArr.includes(query.order_by)){
                     return Promise.reject({msg:"Invalid order_by query",status:400})
+                } else if (query.order_by === 'comment_count') {
+                    queryString += ` ORDER BY ${query.order_by}`
                 } else {
                     queryString += ` ORDER BY a.${query.order_by}`
                 }
